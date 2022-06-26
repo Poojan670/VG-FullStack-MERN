@@ -1,0 +1,41 @@
+{
+  "name": "poojan-video-games-app",
+  "version": "1.0.0",
+  "description": "Node JS backend for video games API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "js",
+    "beginner",
+    "first",
+    "app",
+    "MERN",
+    "mongoose"
+  ],
+  "author": "Poojan Pradhan",
+  "license": "ISC",
+  "devDependencies": {
+    "jshint": "^2.13.4"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "config": "^3.3.7",
+    "debug": "^4.3.4",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "helmet": "^5.1.0",
+    "joi": "^17.6.0",
+    "joi-password-complexity": "^5.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.4.0",
+    "morgan": "^1.10.0",
+    "pug": "^3.0.2",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0",
+    "underscore": "^1.13.4"
+  }
+}

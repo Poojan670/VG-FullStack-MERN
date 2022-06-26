@@ -1,0 +1,7 @@
+{
+    "name": "My Express Production App",
+    "jwtPrivateKey": "VG_APP_jwtPrivateKey",
+    "mail": {
+        "host": "prod-mail-server"
+    }
+}
