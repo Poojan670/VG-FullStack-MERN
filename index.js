@@ -4,12 +4,18 @@ const dotenv = require('dotenv').config();
 //Debug
 const debug = require('debug')('debug')
 
+//Error Handling
+const error = require('./middleware/error')
+
+//Joi and Joi object Id
+const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
+
 // Main packages use
 const express = require('express'),
     helmet = require('helmet'),
     morgan = require('morgan'),
     app = express(),
-    Joi = require('joi'),
     mongoose = require('mongoose')
 
 // Mongo Db Connection Config
@@ -62,7 +68,7 @@ app.set('views', './src/views') //default
 
 // Swagger Settings
 const swaggerJSDoc = require('swagger-jsdoc');
-const {swaggerDefinition} = require('./swagger')
+const { swaggerDefinition } = require('./swagger')
 const options = {
     swaggerDefinition,
     // Paths to files containing OpenAPI definitions
@@ -73,6 +79,7 @@ const swaggerUi = require('swagger-ui-express');
 
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+app.use(error);
 
 // run server in assigned port
 const port = process.env.PORT || 3000;

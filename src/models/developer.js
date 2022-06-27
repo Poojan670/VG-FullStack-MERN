@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
+const { userSchema } = require('./users')
 
 const developerSchema = new mongoose.Schema({
     devName: {
@@ -11,6 +12,11 @@ const developerSchema = new mongoose.Schema({
     },
     bio: String,
     website: String,
+    user: {
+        type: userSchema,
+        required: true,
+        unique: true
+    }
 }, { versionKey: false }
 )
 
@@ -19,6 +25,7 @@ const Developer = new mongoose.model('Developer', developerSchema)
 function validateDeveloper(game) {
     const schema = Joi.object({
         devName: Joi.string().alphanum().min(3).max(50).required(),
+        userId: Joi.objectId().required(),
         bio: Joi.string().min(10),
         website: Joi.string()
     })

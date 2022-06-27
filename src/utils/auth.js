@@ -41,8 +41,13 @@ const login = async (req, res) => {
         return res.status(400).json({ "error": "Invalid username/email or password" })
     }
 
+    if (!user.isActive) {
+        return res.status(400).json({ "error": "You are'nt verified yet, Please try again!" })
+    }
     const token = user.generateAuthToken();
-    res.send(token)
+    res.json({
+        "access_token": token
+    })
 
 }
 

@@ -39,9 +39,14 @@ const userSchema = new mongoose.Schema({
         enum: ['USER', 'ADMIN', 'DEVELOPER'],
         default: 'USER'
     },
-    createdDate: { type: Date, default: Date.now },
-    isActive: { type: Boolean, default: false }
-}, { versionKey: false })
+    isActive: { type: Boolean, default: false },
+    games: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Game',
+        default: null,
+    }
+}, { timestamps: true }, { versionKey: false })
+
 
 userSchema.methods.generateAuthToken = function () {
     const token = jwt.sign({ _id: this._id, userRole: this.userRole }, process.env.jwtPrivateKey)

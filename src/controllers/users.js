@@ -6,31 +6,51 @@ const { hashedPassword } = require('../utils/hash')
 
 
 const listUsers = async (req, res) => {
+
     const users = await User
         .find()
         .sort({ createdDate: 1 })
+        .select('userName email')
     res.send(users)
 }
 
+const getUser = async (req, res) => {
+    const user = await User.findById(req.user._id).select('-password');
+    res.send(user);
+
+}
 const registerUser = async (req, res) => {
     const { error } = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    let user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email });
     if (user) return res.status(400).json({ "error": "User already registerd" })
 
     user = new User(_.pick(req.body, ['userName', 'email', 'password']))
 
     user.password = await hashedPassword(user.password)
-    user = await user.save()
+    await user.save()
 
     const token = user.generateAuthToken();
     res.header('x-authorization', token).send(_.pick(user, ['id', 'name', 'email']))
 }
 
+const updateUserRole = async (req, res) => {
+    const { error } = validate(req.body)
+    if (error) return res.status(400).send(error.details[0].message)
+
+    const user = await User.findByIdAndUpdate(req.params._id, { userRole: req.body.userRole })
+    if (!user) {
+        return res.status(404).send(`User with this ${req.params._id} not found!`)
+    }
+}
+
+
 exports.register = registerUser
 exports.listUsers = listUsers
+exports.getUser = getUser
+exports.updateUserRole = updateUserRole
 
 // const getGame = async (req, res) => {
 //     const game = await Game.findById({ _id: req.params.id })

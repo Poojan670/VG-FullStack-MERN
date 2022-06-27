@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Joi = require('joi')
 const { categorySchema } = require('./category')
 const { developerSchema } = require('./developer')
+const { userSchema } = require('./users')
 
 const Game = new mongoose.model('Game', new mongoose.Schema({
     title: {
@@ -35,14 +36,19 @@ const Game = new mongoose.model('Game', new mongoose.Schema({
         min: 0,
         max: 255
     },
-}, { versionKey: false })
+    soldTo: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        default: null,
+    }
+}, { timestamps: true }, { versionKey: false })
 )
 
 function validateGame(game) {
     const schema = Joi.object({
         title: Joi.string().min(5).max(50).required(),
-        developerId: Joi.string().required(),
-        categoryId: Joi.string().required(),
+        developerId: Joi.objectId().required(),
+        categoryId: Joi.objectId().required(),
         price: Joi.number().required(),
         numberInStock: Joi.number().min(0).required()
     })
