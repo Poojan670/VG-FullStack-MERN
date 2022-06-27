@@ -1,9 +1,7 @@
-// Swagger Settings
 const swaggerJSDoc = require('swagger-jsdoc');
-const { swaggerDefinition } = require('../../swagger')
+const { swaggerDefinition } = require('./swaggerConfig')
 const options = {
     swaggerDefinition,
-    // Paths to files containing OpenAPI definitions
     apis: ['./routes/*.js'],
 };
 const swaggerSpec = swaggerJSDoc(options);

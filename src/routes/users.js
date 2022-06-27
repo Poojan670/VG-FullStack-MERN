@@ -6,7 +6,7 @@ const { register, listUsers, getUser, updateUserRole } = require('../controllers
 
 router.post('/', register)
 
-router.get('/', auth, listUsers)
+router.get('/', listUsers)
 router.get('/me', auth, getUser)
 router.patch('/:id', [auth, isAdmin], updateUserRole)
 
