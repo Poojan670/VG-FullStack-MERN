@@ -6,7 +6,6 @@ const { hashedPassword } = require('../utils/hash')
 
 
 const listUsers = async (req, res) => {
-    throw new Error("asdfsa")
 
     const users = await User
         .find()
