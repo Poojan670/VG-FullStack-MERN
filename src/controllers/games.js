@@ -4,15 +4,10 @@ const { Game, validate } = require('../models/games')
 const { User } = require('../models/users')
 
 const listGames = async (req, res, next) => {
-    try {
-        const games = await Game
-            .find()
-            .sort({ name: 1 })
-        res.send(games)
-
-    } catch (ex) {
-        next(ex);
-    }
+    const games = await Game
+        .find()
+        .sort({ name: 1 })
+    res.send(games)
 }
 
 const createGames = async (req, res) => {

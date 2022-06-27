@@ -1,27 +1,44 @@
 // Environment
 const dotenv = require('dotenv').config();
 
-//Debug
-const debug = require('debug')('debug')
+//  Loggers
+const winston = require('winston')
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'user-service' },
+    transports: [
+        new winston.transports.File({ filename: './logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: './logs/combined.log', handleExceptions: true, handleRejections: true }),
+        // new winston.transports.MongoDB({ db: 'mongodb://localhost/vg_db_log', level: 'info' })
+    ],
+});
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.simple(),
+    }));
+}
 
 //Error Handling
-const error = require('./middleware/error')
-
-//Joi and Joi object Id
-const Joi = require('joi')
-Joi.objectId = require('joi-objectid')(Joi)
+require('express-async-errors')
 
 // Main packages use
 const express = require('express'),
-    helmet = require('helmet'),
     morgan = require('morgan'),
     app = express(),
-    mongoose = require('mongoose')
+    mongoose = require('mongoose'),
+    Joi = require('joi')
+
+Joi.objectId = require('joi-objectid')(Joi)
+
+// Main App Calls
+require('./main/api/routes')(app);
+require('./main/swagger/swagger')(app);
 
 // Mongo Db Connection Config
 mongoose.connect('mongodb://localhost/vg_db')
-    .then(() => debug('Connected to Mongodb..'))
-    .catch(err => debug("Couldn't connect to MongoDb"))
+    .then(() => console.log('Connected to Mongodb..'))
+    .catch(err => console.log("Couldn't connect to MongoDb"))
 
 // Config
 const config = require('config')
@@ -30,56 +47,11 @@ if (!process.env.jwtPrivateKey) {
     process.exit(1);
 }
 
-// Custom Middleware
-const logger = require('./middleware/logger')
-
-//Routes
-const home = require('./src/routes/home'),
-    users = require('./src/routes/users'),
-    dev = require('./src/routes/developer'),
-    category = require('./src/routes/category'),
-    games = require('./src/routes/games')
-
-// users = require('.src/routes/user')
-
-// App Use
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
-app.use(helmet());
-app.use(logger);
-
-// morgan enabled via .env file
+// morgan 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('tiny'));
-    debug("Morgan enabled");
+    console.log("Morgan enabled");
 }
-
-// Routers Usage
-app.use('/', home)
-app.use('/api/devs', dev)
-app.use('/api/categories', category)
-app.use('/api/games', games)
-app.use('/api/users', users)
-
-// App Set
-app.set('view engine', 'pug');
-app.set('views', './src/views') //default
-
-// Swagger Settings
-const swaggerJSDoc = require('swagger-jsdoc');
-const { swaggerDefinition } = require('./swagger')
-const options = {
-    swaggerDefinition,
-    // Paths to files containing OpenAPI definitions
-    apis: ['./routes/*.js'],
-};
-const swaggerSpec = swaggerJSDoc(options);
-const swaggerUi = require('swagger-ui-express');
-
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.use(error);
 
 // run server in assigned port
 const port = process.env.PORT || 3000;
