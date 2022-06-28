@@ -6,7 +6,6 @@ const { hashedPassword } = require('../utils/hash')
 
 
 const listUsers = async (req, res) => {
-
     const users = await User
         .find()
         .sort({ createdDate: 1 })
@@ -16,6 +15,7 @@ const listUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password');
+    if (!user) return res.status(403).json({ "error": "User not found!" })
     res.send(user);
 
 }

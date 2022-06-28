@@ -4,7 +4,7 @@ const winston = require('winston')
 require('winston-mongodb')
 
 module.exports = function () {
-    const logger = winston.createLogger({
+    const logger = new winston.createLogger({
         level: 'info',
         format: winston.format.json(),
         defaultMeta: { service: 'user-service' },

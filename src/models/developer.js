@@ -13,7 +13,8 @@ const developerSchema = new mongoose.Schema({
     bio: String,
     website: String,
     user: {
-        type: userSchema,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
         unique: true
     }

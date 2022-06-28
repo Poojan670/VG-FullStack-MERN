@@ -24,7 +24,8 @@ const Game = new mongoose.model('Game', new mongoose.Schema({
         required: true
     },
     category: {
-        type: categorySchema,
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Category',
         required: true
     },
     soldCount: {
