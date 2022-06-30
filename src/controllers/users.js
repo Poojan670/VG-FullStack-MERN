@@ -60,7 +60,7 @@ const updateUserRole = async (req, res) => {
 }
 
 const verifyUser = async (req, res) => {
-    const { token } = req.params
+    const token = req.params.id
     if (!token) {
         return res.status(422).send({
             message: "Missing Token"
