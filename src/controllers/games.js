@@ -59,16 +59,19 @@ const BuyGame = async (req, res) => {
     const game = await Game.findById(req.params.id)
     if (!game) return res.status(404).send(`Game with ID ${req.params.id} not found`)
 
-    user = await User.findById(req.user._id)
+    const user = await User.findById(req.user._id)
     if (!user) return res.status(404).send('User not found')
+
+    if (user.walletAmount < game.price) {
+        res.status(400).json({ "ERROR": "Insufficient Balance to buy this game, Please try again!" })
+    }
+    await user.updateOne({ games: req.params.id, walletAmount: walletAmount - game.price })
 
     await game.updateOne(
         { soldTo: soldTo.push(req.user_id) },
         { soldCount: soldCount++ },
         { numberInStock: numberInStock-- }
     )
-
-    await user.updateOne({ games: req.params.id })
 
     res.status(200).json({ "success": "Game Bought Successfully!" })
 

@@ -48,8 +48,10 @@ const deleteGameCategory = async (req, res) => {
 
 }
 
-exports.listGameCategories = listGameCategories
-exports.createGameCategory = createGameCategory
-exports.getGameCategory = getGameCategory
-exports.updateGameCategory = updateGameCategory
-exports.deleteGameCategory = deleteGameCategory
+module.exports = {
+    listGameCategories,
+    createGameCategory,
+    getGameCategory,
+    updateGameCategory,
+    deleteGameCategory
+}

@@ -7,7 +7,8 @@ const express = require('express'),
     userDetails = require('../../src/routes/userDetails'),
     dev = require('../../src/routes/developer'),
     category = require('../../src/routes/category'),
-    games = require('../../src/routes/games')
+    games = require('../../src/routes/games'),
+    wallet = require('../../src/routes/wallet')
 
 
 module.exports = function (app) {
@@ -26,6 +27,7 @@ module.exports = function (app) {
     app.use('/api/user-details', userDetails)
     app.use('/api/categories', category)
     app.use('/api/games', games)
+    app.use('/api/wallet', wallet)
 
     app.set('view engine', 'pug');
     app.set('views', './src/views')

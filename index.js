@@ -1,8 +1,8 @@
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const express = require('express'),
     app = express()
 
-// require('./main/logger')();
+require('./main/logger')();
 require('./main/admin')(app);
 require('./main/config')(app);
 require('./main/joi')();

@@ -6,6 +6,8 @@ const { User } = require('../src/models/users')
 const { Game } = require('../src/models/games')
 const { Developer } = require('../src/models/developer')
 const { Category } = require('../src/models/category')
+const { UserDetails } = require('../src/models/userDetails')
+const { Wallet } = require('../src/models/wallet')
 
 const userParent = {
     name: 'users',
@@ -30,6 +32,8 @@ const adminJs = new AdminJS({
                 }
             }
         },
+        { resource: UserDetails, options: { parent: userParent } },
+        { resource: Wallet, options: { parent: userParent } },
         { resource: Developer, options: { parent: userParent } },
         { resource: Category, options: { parent: gameParent } },
         { resource: Game, options: { parent: gameParent } },

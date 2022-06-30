@@ -1,5 +1,5 @@
 require('express-async-errors')
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const winston = require('winston')
 require('winston-mongodb')
 

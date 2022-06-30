@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 const Joi = require('joi')
@@ -34,7 +34,7 @@ const login = async (req, res) => {
             { userName: userName }
         ]
     });
-    if (!user) return res.status(400).json({ "error": "Invalid username/email or password" })
+    if (!user) return res.status(404).json({ "error": "User Does not exist!" })
 
     const passwordValidate = await validPassword(password, user.password)
     if (!passwordValidate) {
@@ -42,7 +42,7 @@ const login = async (req, res) => {
     }
 
     if (!user.isActive) {
-        return res.status(400).json({ "error": "You are'nt verified yet, Please try again!" })
+        return res.status(403).json({ "error": "You are'nt verified yet, Please try again!" })
     }
     const token = user.generateAuthToken();
     res.json({

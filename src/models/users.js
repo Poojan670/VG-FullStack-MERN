@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+require('dotenv')
 const Joi = require('joi')
 const jwt = require('jsonwebtoken')
 const passwordComplexity = require("joi-password-complexity");
@@ -44,14 +45,24 @@ const userSchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Game',
         default: null,
+    },
+    walletAmount: {
+        type: Number,
+        default: 0,
     }
 }, { timestamps: true }, { versionKey: false })
 
 
 userSchema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id, userRole: this.userRole }, process.env.jwtPrivateKey)
+    const token = jwt.sign({ _id: this._id, userRole: this.userRole }, process.env.jwtPrivateKey, { expiresIn: "1d" })
     return token;
 }
+
+userSchema.methods.generateVerificationToken = function () {
+    const user = this;
+    const verificationToken = jwt.sign({ _id: user._id }, process.env.USER_VERIFICATION_TOKEN_SECRET, { expiresIn: "10m" });
+    return verificationToken
+};
 
 const User = new mongoose.model('User', userSchema)
 

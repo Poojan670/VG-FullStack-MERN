@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
-const { categorySchema } = require('./category')
 const { developerSchema } = require('./developer')
-const { userSchema } = require('./users')
 
 const Game = new mongoose.model('Game', new mongoose.Schema({
     title: {

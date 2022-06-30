@@ -1,4 +1,4 @@
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const morgan = require('morgan')
 
 module.exports = function (app) {
