@@ -1,10 +1,13 @@
 const { Developer, validate } = require('../models/developer')
+const _ = require('lodash')
+const paginate = require('../../middleware/pagination')
 
 const listDevs = async (req, res) => {
     const devs = await Developer
         .find()
         .sort('devName')
-    res.send(devs)
+    const result = await paginate(devs, req, res)
+    res.json(result)
 }
 
 const createDev = async (req, res) => {
@@ -13,17 +16,18 @@ const createDev = async (req, res) => {
         return res.status(400).send(error.details[0].message)
     }
 
+    const user = await findById(req.uesr._id)
+    if (user) return res.status(400).json({
+        "message": "you are already a dev!"
+    })
+
     let dev = await findOne({ devName: req.body.devName })
     if (dev) return res.status(400).json({ "error": "Developer with this name already exists!" })
 
-    dev = new Developer({
-        devName: req.body.devName,
-        bio: req.body.bio,
-        website: req.body.website,
-    })
+    dev = new Developer(_.pick(req.body, ['devName', 'bio', 'website']))
+    dev.user = req.user._id
     dev = await dev.save()
     res.send(dev)
-
 }
 
 const getDev = async (req, res) => {

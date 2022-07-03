@@ -17,6 +17,10 @@ const developerSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
         unique: true
+    },
+    approved: {
+        type: Boolean,
+        default: false
     }
 }, { versionKey: false }
 )
@@ -26,7 +30,6 @@ const Developer = new mongoose.model('Developer', developerSchema)
 function validateDeveloper(game) {
     const schema = Joi.object({
         devName: Joi.string().alphanum().min(3).max(50).required(),
-        userId: Joi.objectId().required(),
         bio: Joi.string().min(10),
         website: Joi.string()
     })

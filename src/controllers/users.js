@@ -1,6 +1,7 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
+const paginate = require('../../middleware/pagination')
 const { User, validate } = require('../models/users')
 const { hashedPassword } = require('../utils/hash')
 const { mail } = require('../utils/mail')
@@ -11,15 +12,16 @@ const listUsers = async (req, res) => {
         .find()
         .sort({ createdDate: 1 })
         .select('userName email')
-    res.send(users)
+    const result = await paginate(users, req, res)
+    res.json(result)
 }
 
 const getUser = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password');
     if (!user) return res.status(403).json({ "error": "User not found!" })
     res.send(user);
-
 }
+
 const registerUser = async (req, res) => {
     const { error } = validate(req.body)
     if (error) {
@@ -35,12 +37,13 @@ const registerUser = async (req, res) => {
     const verificationToken = user.generateVerificationToken();
     const url = `http://localhost:${process.env.PORT}/api/users/verify/${verificationToken}`
 
+    await user.save()
+
     await mail.sendMail({
         to: user.email,
         subject: 'Verify Account',
         html: `Click <a href = '${url}'>here</a> to confirm your email.`
     })
-    await user.save()
 
     return res.status(201).json({
         "message": `Sent a verification mail to ${user.email}`
@@ -90,17 +93,52 @@ const verifyUser = async (req, res) => {
     })
 }
 
+const resendCode = async (req, res) => {
+    const email = req.body.email
+    if (!email) return res.status(422).json({
+        "message": "Missing email"
+    })
+    const user = await User.findById({ email: email })
+    if (!user) {
+        return res.status(404).send(`User with this ${req.body.email} not found, Please try again!`)
+    }
+
+    const verificationToken = user.generateVerificationToken();
+    const url = `http://localhost:${process.env.PORT}/api/users/verify/${verificationToken}`
+
+    await mail.sendMail({
+        to: email,
+        subject: 'Resend Verification Code',
+        html: `Click <a href = '${url}'>here</a> to confirm your email.`
+    })
+
+    return res.status(201).json({
+        "message": `Sent a verification mail to ${email}`
+    });
+}
+
+const deleteUser = async (req, res) => {
+    const user = await User.findByIdAndRemove(req.params.id)
+    if (!user) return res.status(404).send("User not found!")
+    res.status(404).send();
+}
+
+const deactivate = async (req, res) => {
+    const user = await User.findByIdAndUpdate(req.user._id, { isActive: false })
+    if (!user) return res.status(404).send("User not found!")
+
+    res.status(200).json({
+        "message": "Sucessfully Deactivated your account!"
+    })
+}
+
 module.exports = {
     registerUser,
     listUsers,
     getUser,
     updateUserRole,
     verifyUser,
+    resendCode,
+    deleteUser,
+    deactivate
 }
-
-// const deleteGame = async (req, res) => {
-//     const game = await Genre.findByIdAndRemove(req.params.id)
-//     if (!game) return res.status(404).send(`Game with ID ${req.params.id} not found`)
-//     res.status(404).send();
-
-// }

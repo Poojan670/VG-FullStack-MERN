@@ -1,3 +1,4 @@
+const paginate = require('../../middleware/pagination')
 const { UserDetails, validate } = require('../models/userDetails')
 
 const createUserDetails = async function (req, res) {
@@ -28,7 +29,8 @@ const createUserDetails = async function (req, res) {
 
 const listUserDetails = async function (req, res) {
     const userDetails = await UserDetails.find().sort('createdAt')
-    res.send(userDetails)
+    const result = await paginate(userDetails, req, res)
+    res.json(result)
 }
 
 const getuserDetail = async function (req, res) {

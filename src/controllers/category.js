@@ -1,10 +1,12 @@
 const { Category, validate } = require('../models/category')
+const paginate = require('../../middleware/pagination');
 
 const listGameCategories = async (req, res) => {
     const categories = await Category
         .find()
         .sort('title')
-    res.send(categories)
+    const result = await paginate(categories, req, res)
+    res.json(result)
 }
 
 const createGameCategory = async (req, res) => {
