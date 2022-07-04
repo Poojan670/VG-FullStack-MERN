@@ -33,7 +33,7 @@ async function paginate(model, req, res) {
             limit: limit,
         };
     }
-    result.results = model.slice(startIndex, endIndex)
+    result.results = await model.slice(startIndex, endIndex)
     return result
 }
 
