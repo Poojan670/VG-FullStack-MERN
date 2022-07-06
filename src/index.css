@@ -265,7 +265,6 @@ ul {
 .form-label {
     display: block;
     font-size: var(--smallText);
-    margin-bottom: 0.5rem;
     text-transform: capitalize;
     letter-spacing: var(--letterSpacing);
 }
@@ -348,48 +347,32 @@ ul {
 
 @keyframes change {
     30% {
-        background-image: url('../public/cloud.jpg');
+        background-image: url('./assets/images/cloud.jpg');
     }
 
     50% {
-        background-image: url('../public/elden_ring.jpg');
+        background-image: url('./assets/images/elden_ring.jpg');
     }
 
     80% {
-        background-image: url('../public/ffvii.jpg');
+        background-image: url('./assets/images/ffvii.jpg');
     }
 }
 
 .full-page {
     min-height: 100vh;
-    background-image: url('../public/cloud.jpg');
+    background-image: url('./assets/images/cloud.jpg');
     background-size: cover;
     position: relative;
     animation: change 10s linear 1s infinite;
 }
 
-.coffee-info {
-    text-align: center;
-    text-transform: capitalize;
-    margin-bottom: 1rem;
-    letter-spacing: var(--letterSpacing);
+.user-profile-pic {
+    height: 300px;
+    width: 300px;
+    margin-top: 50px;
 }
 
-.coffee-info span {
-    display: block;
-}
-
-.coffee-info a {
-    color: var(--primary-500);
-}
-
-@media screen and (min-width: 992px) {
-    .coffee-info {
-        text-align: left;
-    }
-
-    .coffee-info span {
-        display: inline-block;
-        margin-right: 0.5rem;
-    }
+.user-profile-name {
+    margin: -300px 0px 0px 500px;
 }

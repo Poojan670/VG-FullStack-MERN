@@ -1,14 +1,18 @@
-const RegisterForm = ({ type, name, values, onChange, labelText }) => {
+import React from 'react';
+
+const RegisterForm = ({ type, name, value, handleChange, labelText }) => {
     return (
         <div className='form-row'>
             <label htmlFor={name} className='form-label'>
                 {labelText || name}
             </label>
-            <input type={type}
-                className='form-input'
-                value={values.userName}
+            <input
+                type={type}
                 name={name}
-                onChange={onChange} />
+                value={value}
+                onChange={handleChange}
+                className='form-input'
+            />
         </div>
     )
 }

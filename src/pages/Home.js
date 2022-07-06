@@ -1,3 +1,4 @@
+import React from 'react';
 import main from '../assets/images/video_game.svg'
 import { Link } from 'react-router-dom'
 import Wrapper from '../assets/wrapper/Home'
@@ -6,8 +7,8 @@ import Logo from '../components/Logo'
 function Home() {
     return (
         <Wrapper>
-            <div class="area" >
-                <ul class="circles">
+            <div className="area" >
+                <ul className="circles">
                     <li></li>
                     <li></li>
                     <li></li>

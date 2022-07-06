@@ -1,3 +1,4 @@
+import React from 'react';
 import logo from '../assets/images/vg.png'
 import '../index.css'
 

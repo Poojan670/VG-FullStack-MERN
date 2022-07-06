@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Logo, RegisterForm, Alert } from '../components'
 import Wrapper from '../assets/wrapper/Register'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAppContext } from '../context/appContext'
+import { useNavigate } from 'react-router-dom';
 
 const initalState = {
     userName: '',
@@ -11,23 +12,46 @@ const initalState = {
     isMember: false,
 }
 
-const Register = () => {
-    const [values, setValues] = useState(initalState)
+const token = localStorage.getItem('x-authorization')
 
-    const { isLoading, showAlert } = useAppContext();
+const Register = () => {
+    const navigate = useNavigate()
+    const [values, setValues] = useState('')
+    const { isLoading, showAlert, registerUser, loginUser } = useAppContext();
 
     const toggleMember = () => {
         setValues({ ...values, isMember: !values.isMember })
     }
 
     const handleChange = (e) => {
-        console.log(e.target)
+        setValues({ ...values, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(e.target);
+
+        const { userName, email, password, isMember } = values
+        const currentUser = { userName, email, password }
+        if (isMember) {
+            console.log(currentUser)
+            loginUser(currentUser);
+
+
+        } else {
+            registerUser(
+                currentUser,
+            )
+        };
     }
+
+    useEffect(() => {
+        if (token) {
+            setTimeout(() => {
+                navigate('/profile')
+            }, 0)
+        }
+    }, [token, navigate])
+
     return (
         <Wrapper className='full-page'>
             <form className="form" onSubmit={handleSubmit}>
@@ -43,33 +67,32 @@ const Register = () => {
                 {!values.isMember && (
                     < RegisterForm
                         type="text"
-                        name="Username"
-                        values={values.userName}
-                        onChange={handleChange} />
+                        name="userName"
+                        value={values.userName}
+                        handleChange={handleChange} />
                 )}
-
 
                 {/* Email */}
                 <RegisterForm
-                    type="text"
-                    name="Email"
-                    values={values.email}
-                    onChange={handleChange} />
+                    type="email"
+                    name="email"
+                    value={values.email}
+                    handleChange={handleChange} />
 
                 {/* Password */}
                 <RegisterForm
-                    type="text"
-                    name="Password"
-                    values={values.password}
-                    onChange={handleChange} />
+                    type="password"
+                    name="password"
+                    value={values.password}
+                    handleChange={handleChange} />
 
-                <button type='submit' className='btn btn-block'>
+                <button type='submit' className='btn btn-block'
+                    disabled={isLoading}>
                     Submit
                 </button>
                 <p>
                     {values.isMember ? 'Not a member yet?' : 'Already a member?'}
-                    <button type='button' onClick={toggleMember}
-                        className='member-btn'>
+                    <button type='button' onClick={toggleMember} className='member-btn'>
                         {values.isMember ? 'Register' : 'Login'}
                     </button>
                 </p>
