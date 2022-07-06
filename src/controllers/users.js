@@ -18,7 +18,7 @@ const listUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password');
-    if (!user) return res.status(403).json({ "error": "User not found!" })
+    if (!user) return res.status(403).json({ "msg": "User not found!" })
     res.send(user);
 }
 
@@ -28,16 +28,14 @@ const registerUser = async (req, res) => {
         return res.status(400).send(error.details[0].message)
     }
     let user = await User.findOne({ email: req.body.email });
-    if (user) return res.status(400).json({ "error": "User already registerd" })
+    if (user) return res.status(400).json({ "msg": "User already registerd" })
 
     user = new User(_.pick(req.body, ['userName', 'email', 'password']))
 
     user.password = await hashedPassword(user.password)
 
     const verificationToken = user.generateVerificationToken();
-    const url = `http://localhost:${process.env.PORT}/api/users/verify/${verificationToken}`
-
-    await user.save()
+    const url = `http://localhost:${process.env.PORT}/api/v1/users/verify/${verificationToken}`
 
     await mail.sendMail({
         to: user.email,
@@ -45,8 +43,10 @@ const registerUser = async (req, res) => {
         html: `Click <a href = '${url}'>here</a> to confirm your email.`
     })
 
+    await user.save()
+
     return res.status(201).json({
-        "message": `Sent a verification mail to ${user.email}`
+        "msg": `Sent a verification mail to ${user.email}`
     });
     // const token = user.generateAuthToken();
     // res.header('x-authorization', token).send(_.pick(user, ['id', 'name', 'email']))
@@ -58,15 +58,17 @@ const updateUserRole = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req.params._id, { userRole: req.body.userRole })
     if (!user) {
-        return res.status(404).send(`User with this ${req.params._id} not found!`)
+        return res.status(404).json({
+            "msg": `User with this ${req.params._id} not found!`
+        })
     }
 }
 
 const verifyUser = async (req, res) => {
     const token = req.params.id
     if (!token) {
-        return res.status(422).send({
-            message: "Missing Token"
+        return res.status(422).json({
+            "msg": "Missing Token"
         });
     }
 
@@ -81,15 +83,15 @@ const verifyUser = async (req, res) => {
 
     const user = await User.findOne({ _id: payload._id }).exec();
     if (!user) {
-        return res.status(404).send({
-            message: "User does not  exists"
+        return res.status(404).json({
+            "msg": "User does not  exists"
         });
     }
     user.isActive = true;
     await user.save();
 
-    return res.status(200).send({
-        message: "Account Verified"
+    return res.status(200).json({
+        "msg": "Account Verified"
     })
 }
 
@@ -100,11 +102,13 @@ const resendCode = async (req, res) => {
     })
     const user = await User.findById({ email: email })
     if (!user) {
-        return res.status(404).send(`User with this ${req.body.email} not found, Please try again!`)
+        return res.status(404).json({
+            "msg": `User with this ${req.body.email} not found, Please try again!`
+        })
     }
 
     const verificationToken = user.generateVerificationToken();
-    const url = `http://localhost:${process.env.PORT}/api/users/verify/${verificationToken}`
+    const url = `http://localhost:${process.env.PORT}/api/v1/users/verify/${verificationToken}`
 
     await mail.sendMail({
         to: email,
@@ -113,7 +117,7 @@ const resendCode = async (req, res) => {
     })
 
     return res.status(201).json({
-        "message": `Sent a verification mail to ${email}`
+        "msg": `Sent a verification mail to ${email}`
     });
 }
 
@@ -125,10 +129,12 @@ const deleteUser = async (req, res) => {
 
 const deactivate = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.user._id, { isActive: false })
-    if (!user) return res.status(404).send("User not found!")
+    if (!user) return res.status(404).json({
+        "msg": "User not found!"
+    })
 
     res.status(200).json({
-        "message": "Sucessfully Deactivated your account!"
+        "msg": "Sucessfully Deactivated your account!"
     })
 }
 

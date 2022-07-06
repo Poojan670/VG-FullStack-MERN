@@ -18,21 +18,21 @@ const complexityOptions = {
 const userSchema = new mongoose.Schema({
     userName: {
         type: String,
-        required: true,
+        required: [true, 'Please provide your username'],
         minlength: 5,
         maxlength: 50,
         unique: true
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Please provide your email'],
         minlength: 5,
         maxlength: 255,
         unique: true
     },
     password: {
         type: String,
-        required: true,
+        required: [true, 'Please enter your password'],
         minlength: 5,
         maxlength: 1024
     },

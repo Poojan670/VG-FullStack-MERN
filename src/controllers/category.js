@@ -15,7 +15,8 @@ const createGameCategory = async (req, res) => {
         return res.status(400).send(error.details[0].message)
     }
     let category = await Category.findOne({ title: req.body.title })
-    if (category) return res.status(400).json({ "error": "Item Category with this title already exists!" })
+    if (category) return res.status(400).json(
+        { "msg": "Item Category with this title already exists!" })
 
     category = new Category({
         title: req.body.title,
@@ -26,7 +27,9 @@ const createGameCategory = async (req, res) => {
 
 const getGameCategory = async (req, res) => {
     const category = await Category.findById({ _id: req.params.id })
-    if (!category) return res.status(404).send("The Game Category with the given id was not found!")
+    if (!category) return res.status(404).json({
+        "msg": "The Game Category with the given id was not found!"
+    })
     res.send(category)
 }
 
@@ -38,14 +41,18 @@ const updateGameCategory = async (req, res) => {
     }
     const category = await Category.findByIdAndUpdate(req.params.id, { title: req.body.title }, { new: true })
     if (!category) {
-        return res.status(404).send(`Category with ID ${req.params.id} not found`)
+        return res.status(404).json({
+            "msg": `Category with ID ${req.params.id} not found`
+        })
     }
     res.send(category)
 }
 
 const deleteGameCategory = async (req, res) => {
     const category = await Category.findByIdAndRemove(req.params.id)
-    if (!category) return res.status(404).send(`Category with ID ${req.params.id} not found`)
+    if (!category) return res.status(404).json({
+        "msg": `Category with ID ${req.params.id} not found`
+    })
     res.status(404).send();
 
 }

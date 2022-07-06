@@ -6,6 +6,6 @@ const { login } = require('../utils/auth')
 
 
 router.get('/', home);
-router.post('/api/login', login)
+router.post('/login', login)
 
 module.exports = router;

@@ -25,7 +25,7 @@ const login = async (req, res) => {
         email = req.body.email;
 
     if ((!!email && !!userName) || (!email && !userName)) {
-        return res.status(400).json({ "error": "Please provide either userName or email" })
+        return res.status(400).json({ "msg": "Please provide either userName or email" })
     }
 
     let user = await User.findOne({
@@ -34,19 +34,19 @@ const login = async (req, res) => {
             { userName: userName }
         ]
     });
-    if (!user) return res.status(404).json({ "error": "User Does not exist!" })
+    if (!user) return res.status(404).json({ "msg": "User Does not exist!" })
 
     const passwordValidate = await validPassword(password, user.password)
     if (!passwordValidate) {
-        return res.status(400).json({ "error": "Invalid username/email or password" })
+        return res.status(400).json({ "msg": "Invalid username/email or password" })
     }
 
     if (!user.isActive) {
-        return res.status(403).json({ "error": "You are'nt verified yet, Please try again!" })
+        return res.status(403).json({ "msg": "You are'nt verified yet, Please try again!" })
     }
     const token = user.generateAuthToken();
     res.json({
-        "access_token": token
+        "token": token
     })
 
 }

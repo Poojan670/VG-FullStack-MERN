@@ -39,7 +39,12 @@ const Game = new mongoose.model('Game', new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
         default: null,
-    }
+    },
+    image: {
+        data: Buffer,
+        contentType: String
+    },
+    images: [Buffer]
 }, { timestamps: true }, { versionKey: false })
 )
 

@@ -8,7 +8,7 @@ const userDetailsSchema = new mongoose.Schema({
         trim: true,
         minlength: 3,
         maxlength: 10,
-        required: true
+        required: [true, 'First Name is required']
     },
     middleName: {
         type: String,
@@ -32,7 +32,7 @@ const userDetailsSchema = new mongoose.Schema({
     },
     dateOfBirth: {
         type: Date,
-        required: true,
+        required: [true, 'Date of Birth is required'],
         trim: true
     },
     age: {

@@ -18,11 +18,11 @@ const createDev = async (req, res) => {
 
     const user = await findById(req.uesr._id)
     if (user) return res.status(400).json({
-        "message": "you are already a dev!"
+        "msg": "you are already a dev!"
     })
 
     let dev = await findOne({ devName: req.body.devName })
-    if (dev) return res.status(400).json({ "error": "Developer with this name already exists!" })
+    if (dev) return res.status(400).json({ "msg": "Developer with this name already exists!" })
 
     dev = new Developer(_.pick(req.body, ['devName', 'bio', 'website']))
     dev.user = req.user._id
@@ -32,7 +32,9 @@ const createDev = async (req, res) => {
 
 const getDev = async (req, res) => {
     const dev = await Developer.findById({ _id: req.params.id })
-    if (!dev) return res.status(404).send("The Game Developer with the given id was not found!")
+    if (!dev) return res.status(404).json({
+        "msg": "The Game Developer with the given id was not found!"
+    })
     res.send(dev)
 }
 
@@ -48,14 +50,18 @@ const updateDev = async (req, res) => {
         website: req.body.website
     }, { new: true })
     if (!dev) {
-        return res.status(404).send(`Developer with ID ${req.params.id} not found`)
+        return res.status(404).json({
+            "msg": `Developer with ID ${req.params.id} not found`
+        })
     }
     res.send(dev)
 }
 
 const deleteDev = async (req, res) => {
     const dev = await Developer.findByIdAndRemove(req.params.id)
-    if (!dev) return res.status(404).send(`Developer with ID ${req.params.id} not found`)
+    if (!dev) return res.status(404).json({
+        "msg": `Developer with ID ${req.params.id} not found`
+    })
     res.status(404).send();
 
 }
