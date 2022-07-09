@@ -1,6 +1,7 @@
 import React, { useReducer, useContext, useEffect } from "react";
 import reducer from './reducer'
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 
 import {
     CLEAR_ALERT,
@@ -10,6 +11,11 @@ import {
     LOGIN_USER_BEGIN,
     LOGIN_USER_SUCCESS,
     LOGIN_USER_ERROR,
+    TOGGLE_SIDEBAR,
+    LOGOUT_USER,
+    USER_DETAILS_BEGIN,
+    USER_DETAILS_SUCCESS,
+    USER_DETAILS_ERROR
 } from "./actions";
 
 const token = localStorage.getItem('x-authorization')
@@ -20,7 +26,8 @@ const initalState = {
     alertText: '',
     alertType: '',
     user: null,
-    token: token,
+    token: null,
+    showSideBar: false,
 }
 
 const appContext = React.createContext()
@@ -34,12 +41,14 @@ const AppProvider = ({ children }) => {
         }, 3000)
     }
 
-    const addUserToLocalStorage = (token) => {
+    const addUserToLocalStorage = (token, user) => {
         localStorage.setItem('x-authorization', token)
+        localStorage.setItem('user', user)
     }
 
     const removeUserFromLocalStorage = () => {
         localStorage.removeItem('x-authorization')
+        localStorage.removeItem('user')
     }
 
     const registerUser = async (currentUser) => {
@@ -71,14 +80,17 @@ const AppProvider = ({ children }) => {
         dispatch({ type: LOGIN_USER_BEGIN })
         try {
             const response = await axios.post('/api/v1/login/', currentUser)
-            console.log(response)
             const { token } = response.data.token
             dispatch({
                 type: LOGIN_USER_SUCCESS,
                 payload: { token }
             })
-            addUserToLocalStorage(response.data.token)
-            window.location = '/profile';
+            const loginToken = response.data.token
+            const decode = jwt.decode(loginToken)
+            const user = JSON.stringify(decode)
+            addUserToLocalStorage(loginToken, user)
+
+            window.location = '/user-details';
 
         } catch (err) {
             console.log(err.response.data)
@@ -97,33 +109,60 @@ const AppProvider = ({ children }) => {
         clearAlert();
     }
 
-    const userProfile = async (currentUser) => {
+    const userDetails = async (userDetailsData) => {
+        dispatch({ type: USER_DETAILS_BEGIN })
         try {
-            const response = await axios.get('/api/v1/user-details/me', currentUser, {
+            const response = await axios.post('/api/v1/user-details/', userDetailsData, {
                 headers: {
-                    'x-authorization': token
+                    'x-authorization': token,
+                    'Content-Type': 'multipart/form-data',
                 }
             })
-            console.log(response)
+            const { msg } = "User Details Created Successfully!"
+            console.log(response.data)
+            dispatch({
+                type: USER_DETAILS_SUCCESS,
+                payload: { msg }
+            })
+
+            window.location = '/profile';
+
         } catch (err) {
-            try {
-                if (err.response.status === 403) {
-                    const userDetailsData = await axios.post('/api/v1/user-details/', {
-                        headers: {
-                            'x-authorization': token
-                        }
-                    })
-                } else {
-                    console.log(err.response)
-                }
-            } catch (err) {
-                console.log(err.response.data)
+            console.log(err.response)
+            if (!err.response.data.msg) {
+                dispatch({
+                    type: USER_DETAILS_ERROR,
+                    payload: { msg: err.response.data }
+                })
+            } else {
+                dispatch({
+                    type: USER_DETAILS_ERROR,
+                    payload: { msg: err.response.data.msg }
+                })
             }
         }
+        clearAlert()
     }
 
+    const toggleSideBar = () => {
+        dispatch({ type: TOGGLE_SIDEBAR })
+    }
+
+    const logOutUser = () => {
+        dispatch({ type: LOGOUT_USER })
+        removeUserFromLocalStorage()
+    }
+
+
     return (
-        <appContext.Provider value={{ ...state, registerUser, loginUser, userProfile }}>
+        <appContext.Provider value={{
+            ...state,
+            registerUser,
+            loginUser,
+            userDetails,
+            toggleSideBar,
+            logOutUser,
+        }}>
             {children}
         </appContext.Provider>
     )
