@@ -12,8 +12,7 @@ const userDetailsSchema = new mongoose.Schema({
     },
     middleName: {
         type: String,
-        minlength: 3,
-        maxlength: 10
+        maxlength: 10,
     },
     lastName: {
         type: String,
@@ -21,8 +20,7 @@ const userDetailsSchema = new mongoose.Schema({
         maxlength: 10
     },
     userPhoto: {
-        data: Buffer,
-        contentType: String
+        type: String
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -56,9 +54,10 @@ const UserDetails = new mongoose.model('UserDetails', userDetailsSchema)
 function validateUserDetails(UserDetails) {
     const schema = Joi.object({
         firstName: Joi.string().min(3).max(50).required(),
-        middleName: Joi.string().min(3).max(50),
+        middleName: Joi.string().max(50).allow(null, ''),
         lastName: Joi.string().min(3).max(50).required(),
-        userId: Joi.objectId().required(),
+        userPhoto: Joi.allow(null, ''),
+        // userId: Joi.objectId().required(),
         dateOfBirth: Joi.date().required(),
     })
     return schema.validate(UserDetails);
