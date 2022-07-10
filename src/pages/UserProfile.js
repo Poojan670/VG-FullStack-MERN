@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Nav } from '../assets/wrapper/NavBar'
 import { useAppContext } from '../context/appContext'
 import NavBar from './NavBar'
 
@@ -19,7 +18,7 @@ const initalState = {
 
 const UserProfile = () => {
     const navigate = useNavigate();
-    const { showAlert, displayAlert, updateUser, isLoading } = useAppContext();
+    const { getUserDetails } = useAppContext();
     const [values, setValues] = useState(initalState)
 
     useEffect(() => {
@@ -30,33 +29,71 @@ const UserProfile = () => {
         }
     }, [token, navigate])
 
-    const {
-        firstName,
-        middleName,
-        lastName,
-        userPhoto,
-        user,
-        dateOfBirth
-    } = values
-    
-    const currentUser = { firstName, middleName, lastName, userPhoto, user, dateOfBirth }
 
-    // const profile = userProfile(currentUser)
+    useEffect(() => {
+        (async () => {
+            try {
+                await Promise.resolve(getUserDetails()).then((data) => {
+                    setValues({
+                        firstName: data.firstName,
+                        middleName: data.middleName,
+                        lastName: data.lastName,
+                        userPhoto: data.userPhoto,
+                        user: data.user,
+                        dateOfBirth: data.dateOfBirth,
+                        age: data.age,
+                    });
+                })
+            } catch {
+                console.log("data fetch error")
+            }
+        })()
+    }, [setValues]);
 
     return (
         <main>
             <NavBar />
-            <div className='container'>
-                <div className='profile-details'>
-                    <img src='https://www.freepnglogos.com/uploads/tom-and-jerry-png/tom-and-jerry-png-picture-web-icons-png-7.png' alt='user-photo' className='user-profile-pic' />
-                    <h1 className='user-profile-name'>
-                        Welcome<span id='h1-home'> Poojan Pradhan</span>
-                        <br></br>
-                        email: <span id='h1-email' style={{ textTransform: 'lowercase' }}>po0janhunt@gmail.com</span>
-                    </h1>
+            <div className="col-md-4 animated fadeIn" >
+                <div className="card">
+                    <div className="card-body">
+                        <div className="avatar">
+                            <img
+                                src={values.userPhoto}
+                                className="card-img-top"
+                                alt=""
+                            />
+                            <h5 className="card-title">
+                                {values.firstName +
+                                    " " +
+                                    values.lastName}
+                            </h5>
+                            <h5 className='card-age'>{values.age}</h5>
+                            <button
+                                className="btn"
+                                id='msg-btn'
+                                onClick={e => {
+                                    this.loadMore();
+                                }}
+                            >
+                                Message
+                            </button>
+                            <button
+                                className="btn"
+                                id='msg-btn'
+                                onClick={e => {
+                                    this.loadMore();
+                                }}
+                            >
+                                Follow
+                            </button>
+
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
-        </main>
+        </main >
     )
 }
 

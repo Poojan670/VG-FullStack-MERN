@@ -37,11 +37,11 @@ const UserDetails = () => {
         const userDetailsData = { firstName, middleName, lastName, userPhoto, dateOfBirth }
         userDetails(userDetailsData)
 
-        useEffect(() => {
-            setTimeout(() => {
-                navigate('/profile')
-            }, 3000)
-        }, [navigate])
+        //     useEffect(() => {
+        //         setTimeout(() => {
+        //             navigate('/profile')
+        //         }, 3000)
+        //     }, [navigate])
     }
 
     // useEffect(() => {
@@ -86,7 +86,6 @@ const UserDetails = () => {
                 <UserDetailsForm
                     type="file"
                     name="userPhoto"
-                    // value={values.userPhoto}
                     handleChange={handlePhoto} />
 
                 <UserDetailsForm

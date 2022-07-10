@@ -144,6 +144,19 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
+    const getUserDetails = async () => {
+        try {
+            const response = await axios.get('/api/v1/user-details/me', {
+                headers: {
+                    'x-authorization': token
+                }
+            })
+            return response.data
+        } catch (err) {
+            console.log(err.response)
+        }
+    }
+
     const toggleSideBar = () => {
         dispatch({ type: TOGGLE_SIDEBAR })
     }
@@ -151,6 +164,7 @@ const AppProvider = ({ children }) => {
     const logOutUser = () => {
         dispatch({ type: LOGOUT_USER })
         removeUserFromLocalStorage()
+        window.location = ''
     }
 
 
@@ -162,6 +176,7 @@ const AppProvider = ({ children }) => {
             userDetails,
             toggleSideBar,
             logOutUser,
+            getUserDetails,
         }}>
             {children}
         </appContext.Provider>

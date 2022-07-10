@@ -345,6 +345,72 @@ ul {
     margin: 0 auto;
 }
 
+.col-md-4 {
+    margin-bottom: 10px;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-top: 60px;
+}
+
+.card {
+    padding-top: 50px;
+    padding-left: 20rem;
+    padding-right: 20rem;
+    border: solid 5px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+}
+
+.card:hover {
+    box-shadow: 0 0 12px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    margin-top: 50px;
+    margin-left: 200px;
+    font-size: large;
+    font-size: 3rem;
+}
+
+.card-text .fa {
+    font-size: 26px;
+}
+
+.avatar {
+    display: flex;
+    justify-content: left;
+    margin-left: -200px;
+    height: 450px;
+}
+
+.avatar img {
+    border: solid 6px transparent;
+    border-radius: 50%;
+    margin-bottom: 30px;
+}
+
+.card:hover .avatar img {
+    border-color: rgb(99, 204, 131);
+}
+
+#msg-btn {
+    display: inline-flex;
+    height: 30px;
+    margin-top: 300px;
+    margin-left: -200px;
+    justify-content: space-between;
+
+}
+
+footer p {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+footer p a,
+footer p a:hover {
+    color: rgb(99, 204, 131);
+}
+
+
 @keyframes change {
     30% {
         background-image: url('./assets/images/cloud.jpg');
