@@ -18,7 +18,7 @@ const createUserDetails = async function (req, res) {
         lastName: req.body.lastName,
         user: userId,
         dateOfBirth: req.body.dateOfBirth,
-        userPhoto: req.file.path
+        userPhoto: req.file.path,
     })
     await userDetail.save()
     res.status(201).send(userDetail)
@@ -36,8 +36,29 @@ const getuserDetail = async function (req, res) {
     res.send(userDetail)
 }
 
+const addUserDetail = async function (req, res) {
+    const { error } = validate(req.body)
+    if (error) {
+        res.status(400).send(error.details[0].message)
+        return;
+    }
+    const userDetail = await UserDetails.findByIdAndUpdate(req.params.id,
+        {
+            country: req.body.country,
+            city: req.body.city,
+            phoneNo: req.body.phoneNo
+
+        }, { new: true })
+    if (!userDetail) {
+        return res.status(404).json({
+            "msg": `User Details with ID ${req.params.id} not found`
+        })
+    }
+}
+
 module.exports = {
     createUserDetails,
     listUserDetails,
-    getuserDetail
+    getuserDetail,
+    addUserDetail
 }

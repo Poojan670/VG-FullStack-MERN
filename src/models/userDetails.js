@@ -37,6 +37,12 @@ const userDetailsSchema = new mongoose.Schema({
         type: Number,
         min: 10,
         max: 99
+    },
+    country: String,
+    city: String,
+    phoneNo: {
+        type: String,
+        match: [/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/, 'Phone number is not valid!'],
     }
 }, { timestamps: true }, { versionKey: false })
 
@@ -57,12 +63,21 @@ function validateUserDetails(UserDetails) {
         middleName: Joi.string().max(50).allow(null, ''),
         lastName: Joi.string().min(3).max(50).required(),
         userPhoto: Joi.allow(null, ''),
-        // userId: Joi.objectId().required(),
         dateOfBirth: Joi.date().required(),
+    })
+    return schema.validate(UserDetails);
+}
+
+function validateAdditionalUserDetails(UserDetails) {
+    const schema = Joi.object({
+        country: Joi.string().min(3).max(20),
+        city: Joi.string().min(3).max(50),
+        phoneNo: Joi.string().required()
     })
     return schema.validate(UserDetails);
 }
 
 exports.userDetailsSchema = userDetailsSchema
 exports.validate = validateUserDetails
+exports.validateMore = validateAdditionalUserDetails
 exports.UserDetails = UserDetails
