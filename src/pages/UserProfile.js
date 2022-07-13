@@ -46,6 +46,7 @@ const UserProfile = () => {
                 })
             } catch {
                 console.log("data fetch error")
+                navigate('/user-details')
             }
         })()
     }, [setValues]);
